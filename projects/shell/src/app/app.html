@@ -1,0 +1,17 @@
+
+<header class="topbar">
+  <h1>Digital Wallet</h1>
+
+  @if (isAuthenticated) {
+    <nav>
+      <a routerLink="/wallet" routerLinkActive="active">Wallet</a>
+      <a routerLink="/transfer" routerLinkActive="active">Transfer</a>
+      <a routerLink="/history" routerLinkActive="active">History</a>
+      <button type="button" (click)="logout()">Logout</button>
+    </nav>
+  }
+</header>
+
+<main class="page">
+  <router-outlet />
+</main>

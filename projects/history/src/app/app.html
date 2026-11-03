@@ -1,0 +1,79 @@
+
+<div class="history-page">
+  <div class="page-heading">
+    <div>
+      <h2>Transaction History</h2>
+      <p>View and manage all your wallet transactions.</p>
+    </div>
+    <span class="transaction-count">12 Transactions</span>
+  </div>
+
+  <div class="history-summary">
+    <div class="summary-card">
+      <span>Total Transactions</span>
+      <h3>12</h3>
+      <small>All time</small>
+    </div>
+    <div class="summary-card">
+      <span>Total Money Received</span>
+      <h3 class="credit">$12,500.00</h3>
+      <small>Credits</small>
+    </div>
+    <div class="summary-card">
+      <span>Total Money Spent</span>
+      <h3 class="debit">$4,850.75</h3>
+      <small>Debits</small>
+    </div>
+  </div>
+
+  <section class="history-card">
+    <div class="history-header">
+      <div>
+        <h3>All Transactions</h3>
+        <p>Your recent wallet activity</p>
+      </div>
+    </div>
+
+    <div class="history-filters">
+      <input
+        type="search"
+        placeholder="Search transactions..."
+        aria-label="Search transactions"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+
+      <select
+        aria-label="Filter transactions"
+        (change)="selectedType.set($any($event.target).value)"
+      >
+        <option value="all">All Transactions</option>
+        <option value="credit">Credits</option>
+        <option value="debit">Debits</option>
+      </select>
+    </div>
+  <div class="transaction-list">
+  @for (transaction of filteredTransactions(); track transaction.name) {
+    <div class="transaction-row">
+      <div class="transaction-icon" [class]="transaction.iconClass">
+        {{ transaction.icon }}
+      </div>
+
+      <div class="transaction-info">
+        <strong>{{ transaction.name }}</strong>
+        <span>{{ transaction.category }} · {{ transaction.date }}</span>
+      </div>
+
+      <span class="transaction-status completed">
+        {{ transaction.status }}
+      </span>
+
+      <strong class="amount" [class]="transaction.type">
+        {{ transaction.type === 'credit' ? '+' : '-' }}{{ transaction.amount | currency:'CAD':'symbol-narrow':'1.2-2' }}
+      </strong>
+    </div>
+  } @empty {
+    <p class="empty-message">No transactions found.</p>
+  }
+</div>
+  </section>
+</div>

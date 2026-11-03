@@ -19,5 +19,31 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/shell/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/shell/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/wallet/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/wallet/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/transfer/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/transfer/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/history/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/history/tsconfig.spec.json"
+    }
+  ]
 }

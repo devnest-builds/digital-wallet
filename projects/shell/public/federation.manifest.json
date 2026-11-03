@@ -1,0 +1,5 @@
+{
+  "wallet": "http://localhost:4201/remoteEntry.json",
+  "transfer": "http://localhost:4202/remoteEntry.json",
+  "history": "http://localhost:4203/remoteEntry.json"
+}

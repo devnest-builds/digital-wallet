@@ -1,0 +1,191 @@
+
+<div class="transfer-page">
+  <div class="page-heading">
+    <div>
+      <h2>Transfer Money</h2>
+      <p>Send money securely to your contacts or other accounts.</p>
+    </div>
+    <span class="secure-label">🔒 Secure Transfer</span>
+  </div>
+
+  <div class="transfer-layout">
+    <section class="transfer-card">
+      <h3>Transfer Details</h3>
+      <p class="card-description">
+        Enter the recipient and payment details.
+      </p>
+
+      <form [formGroup]="transferForm" (ngSubmit)="reviewTransfer()" (input)="resetReview()">
+
+        <div class="form-group">
+          <label for="recipient">Recipient Name</label>
+          <input
+            id="recipient"
+            type="text"
+            formControlName="recipient"
+            placeholder="Enter recipient's full name"
+          />
+
+          @if (transferForm.controls.recipient.touched &&
+               transferForm.controls.recipient.invalid) {
+            <small class="error-message">
+              Recipient name is required.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email">Recipient Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="example@email.com"
+          />
+
+          @if (transferForm.controls.email.touched &&
+               transferForm.controls.email.hasError('required')) {
+            <small class="error-message">Email is required.</small>
+          }
+
+          @if (transferForm.controls.email.touched &&
+               transferForm.controls.email.hasError('email')) {
+            <small class="error-message">
+              Enter a valid email address.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="account">Account Number</label>
+          <input
+            id="account"
+            type="text"
+            formControlName="account"
+            placeholder="Enter account number"
+          />
+
+          @if (transferForm.controls.account.touched &&
+               transferForm.controls.account.invalid) {
+            <small class="error-message">
+              Account number must contain at least 8 characters.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Transfer Amount (CAD)</label>
+
+          <div class="amount-input">
+            <span>$</span>
+            <input
+              id="amount"
+              type="number"
+              formControlName="amount"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+            />
+          </div>
+
+          @if (transferForm.controls.amount.touched &&
+               transferForm.controls.amount.hasError('min')) {
+            <small class="error-message">
+              Amount must be greater than zero.
+            </small>
+          }
+
+          @if (transferForm.controls.amount.touched &&
+               transferForm.controls.amount.hasError('max')) {
+            <small class="error-message">
+              Insufficient balance.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="description">Transfer Description</label>
+          <input
+            id="description"
+            type="text"
+            formControlName="description"
+            placeholder="What's this transfer for?"
+          />
+        </div>
+
+        <button type="submit" class="transfer-button">
+          Review Transfer →
+        </button>
+      </form>
+
+      @if (reviewData(); as review) {
+        <div class="review-panel">
+          <h3>Review Your Transfer</h3>
+
+          <p><strong>Recipient:</strong> {{ review.recipient }}</p>
+          <p><strong>Email:</strong> {{ review.email }}</p>
+          <p><strong>Account:</strong> {{ review.account }}</p>
+
+          <p>
+            <strong>Amount:</strong>
+            {{ review.amount | currency:'CAD':'symbol-narrow':'1.2-2' }}
+          </p>
+
+          <p>
+            <strong>Description:</strong>
+            {{ review.description || 'N/A' }}
+          </p>
+
+          <p>Please verify these details before proceeding.</p>
+
+          @if (!transferConfirmed()) {
+            <button type="button" (click)="confirmTransfer()">
+              Confirm Transfer
+            </button>
+          } @else {
+            <p class="success-message">
+              Transfer confirmed successfully! (Demo only)
+            </p>
+          }
+        </div>
+      }
+    </section>
+
+    <aside class="transfer-summary">
+      <h3>Transfer Summary</h3>
+
+      <div class="summary-balance">
+        <span>Available Balance</span>
+        <h2>
+          {{ availableBalance() | currency:'CAD':'symbol-narrow':'1.2-2' }}
+        </h2>
+        <small>CAD Account</small>
+      </div>
+
+      <div class="summary-row">
+        <span>Transfer Fee</span>
+        <strong>$0.00</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Remaining Balance</span>
+        <strong>
+          {{ remainingBalance() | currency:'CAD':'symbol-narrow':'1.2-2' }}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Processing Time</span>
+        <strong>Instant</strong>
+      </div>
+
+      <div class="security-note">
+        <strong>🔐 Your money is protected</strong>
+        <p>
+          All transfers are securely processed and protected by
+          account-level security.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>

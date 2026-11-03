@@ -1,0 +1,147 @@
+
+:host {
+  display: block;
+  color: #172033;
+}
+
+.wallet-dashboard {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.section-heading,
+.transaction-heading,
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-heading h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.section-heading p,
+.summary-card p {
+  color: #64748b;
+  margin: 0;
+}
+
+.status {
+  color: #16a36a;
+  font-size: 13px;
+}
+
+.balance-card {
+  margin-top: 25px;
+  padding: 28px;
+  border-radius: 15px;
+  color: white;
+  background: linear-gradient(120deg, #193b78, #315fbd);
+}
+
+.balance-card p {
+  color: #dce7ff;
+}
+
+.balance-card h1 {
+  font-size: 38px;
+  margin: 15px 0 25px;
+}
+
+.balance-card h1 small {
+  font-size: 14px;
+}
+
+.card-footer {
+  font-size: 12px;
+  color: #dce7ff;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 22px 0;
+}
+
+.summary-card {
+  padding: 22px;
+  border: 1px solid #e8edf5;
+  border-radius: 12px;
+}
+
+.summary-icon {
+  font-size: 22px;
+}
+
+.income,
+.credit {
+  color: #159b69;
+}
+
+.expense,
+.debit {
+  color: #e05252;
+}
+
+.summary-card h3 {
+  margin: 12px 0 5px;
+  font-size: 24px;
+}
+
+.summary-card small,
+.transaction-info small {
+  color: #8490a3;
+}
+
+.transactions {
+  border: 1px solid #e8edf5;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.transaction-heading h3 {
+  margin: 0;
+}
+
+.transaction-heading span {
+  color: #8490a3;
+  font-size: 12px;
+}
+
+.transaction {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 0;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.transaction:last-child {
+  border-bottom: 0;
+}
+
+.transaction-icon {
+  background: #f1f4fa;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-card h1 {
+    font-size: 28px;
+  }
+}
