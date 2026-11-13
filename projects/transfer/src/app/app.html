@@ -15,8 +15,19 @@
         Enter the recipient and payment details.
       </p>
 
-      <form [formGroup]="transferForm" (ngSubmit)="reviewTransfer()" (input)="resetReview()">
+      @if (balanceLoading()) {
+        <p>Loading your wallet balance...</p>
+      }
 
+      @if (balanceError()) {
+        <p class="error-message">{{ balanceError() }}</p>
+      }
+
+      <form
+        [formGroup]="transferForm"
+        (ngSubmit)="reviewTransfer()"
+        (input)="resetReview()"
+      >
         <div class="form-group">
           <label for="recipient">Recipient Name</label>
           <input
@@ -25,12 +36,9 @@
             formControlName="recipient"
             placeholder="Enter recipient's full name"
           />
-
           @if (transferForm.controls.recipient.touched &&
                transferForm.controls.recipient.invalid) {
-            <small class="error-message">
-              Recipient name is required.
-            </small>
+            <small class="error-message">Recipient name is required.</small>
           }
         </div>
 
@@ -42,29 +50,24 @@
             formControlName="email"
             placeholder="example@email.com"
           />
-
           @if (transferForm.controls.email.touched &&
                transferForm.controls.email.hasError('required')) {
             <small class="error-message">Email is required.</small>
           }
-
           @if (transferForm.controls.email.touched &&
                transferForm.controls.email.hasError('email')) {
-            <small class="error-message">
-              Enter a valid email address.
-            </small>
+            <small class="error-message">Enter a valid email address.</small>
           }
         </div>
 
         <div class="form-group">
-          <label for="account">Account Number</label>
+          <label for="account">Recipient Account Number</label>
           <input
             id="account"
             type="text"
             formControlName="account"
             placeholder="Enter account number"
           />
-
           @if (transferForm.controls.account.touched &&
                transferForm.controls.account.invalid) {
             <small class="error-message">
@@ -75,7 +78,6 @@
 
         <div class="form-group">
           <label for="amount">Transfer Amount (CAD)</label>
-
           <div class="amount-input">
             <span>$</span>
             <input
@@ -97,9 +99,7 @@
 
           @if (transferForm.controls.amount.touched &&
                transferForm.controls.amount.hasError('max')) {
-            <small class="error-message">
-              Insufficient balance.
-            </small>
+            <small class="error-message">Insufficient balance.</small>
           }
         </div>
 
@@ -113,7 +113,11 @@
           />
         </div>
 
-        <button type="submit" class="transfer-button">
+        <button
+          type="submit"
+          class="transfer-button"
+          [disabled]="balanceLoading() || !!balanceError() || transferLoading()"
+        >
           Review Transfer →
         </button>
       </form>
@@ -121,31 +125,43 @@
       @if (reviewData(); as review) {
         <div class="review-panel">
           <h3>Review Your Transfer</h3>
-
           <p><strong>Recipient:</strong> {{ review.recipient }}</p>
           <p><strong>Email:</strong> {{ review.email }}</p>
           <p><strong>Account:</strong> {{ review.account }}</p>
-
           <p>
             <strong>Amount:</strong>
             {{ review.amount | currency:'CAD':'symbol-narrow':'1.2-2' }}
           </p>
-
-          <p>
-            <strong>Description:</strong>
-            {{ review.description || 'N/A' }}
-          </p>
-
+          <p><strong>Description:</strong> {{ review.description || 'N/A' }}</p>
           <p>Please verify these details before proceeding.</p>
 
+          @if (errorMessage()) {
+            <p class="error-message">{{ errorMessage() }}</p>
+          }
+
           @if (!transferConfirmed()) {
-            <button type="button" (click)="confirmTransfer()">
-              Confirm Transfer
+            <button
+              type="button"
+              (click)="confirmTransfer()"
+              [disabled]="transferLoading()"
+            >
+              {{ transferLoading() ? 'Processing...' : 'Confirm Transfer' }}
             </button>
           } @else {
-            <p class="success-message">
-              Transfer confirmed successfully! (Demo only)
-            </p>
+            <div class="success-message">
+              <h4>Transfer successful!</h4>
+              <p>{{ transferResult()?.message }}</p>
+              <p>
+                Transaction ID: {{ transferResult()?.transactionId }}
+              </p>
+              <p>
+                Amount:
+                {{ transferResult()?.amount | currency:'CAD':'symbol-narrow':'1.2-2' }}
+              </p>
+              <button type="button" (click)="startNewTransfer()">
+                Make Another Transfer
+              </button>
+            </div>
           }
         </div>
       }
@@ -182,7 +198,7 @@
       <div class="security-note">
         <strong>🔐 Your money is protected</strong>
         <p>
-          All transfers are securely processed and protected by
+          Transfers are processed by the backend and protected by
           account-level security.
         </p>
       </div>

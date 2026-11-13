@@ -1,5 +1,6 @@
 
 <div class="wallet-dashboard">
+
   <div class="section-heading">
     <div>
       <h2>My Wallet</h2>
@@ -10,26 +11,41 @@
 
   <div class="balance-card">
     <p>Total Available Balance</p>
-    <h1>$24,850.75 <small>CAD</small></h1>
-    <div class="card-footer">
-      <span>Account ending in 4582</span>
-      <span>•••• •••• •••• 4582</span>
-    </div>
+
+    @if (isLoading()) {
+      <h1>Loading...</h1>
+    } @else if (wallet()) {
+      <h1>
+        {{ wallet()!.balance | currency:'CAD':'symbol-narrow':'1.2-2' }}
+        <small>CAD</small>
+      </h1>
+
+      <div class="card-footer">
+        <span>{{ wallet()!.accountNumber }}</span>
+        <span>{{ wallet()!.accountNumber }}</span>
+      </div>
+    } @else {
+      <h1>-- CAD</h1>
+    }
   </div>
+
+  @if (errorMessage()) {
+    <p class="empty-message">{{ errorMessage() }}</p>
+  }
 
   <div class="summary-grid">
     <div class="summary-card">
       <span class="summary-icon income">↗</span>
       <p>Total Income</p>
-      <h3>$8,500.00</h3>
-      <small>+12.5% this month</small>
+      <h3>{{ totalIncome() | currency:'CAD':'symbol-narrow':'1.2-2' }}</h3>
+      <small>Based on recorded transactions</small>
     </div>
 
     <div class="summary-card">
       <span class="summary-icon expense">↘</span>
       <p>Total Expenses</p>
-      <h3>$3,240.50</h3>
-      <small>Monthly spending</small>
+      <h3>{{ totalExpenses() | currency:'CAD':'symbol-narrow':'1.2-2' }}</h3>
+      <small>Based on recorded transactions</small>
     </div>
   </div>
 
@@ -39,49 +55,27 @@
       <span>Last 5 transactions</span>
     </div>
 
-    <div class="transaction">
-      <div class="transaction-icon">🛒</div>
-      <div class="transaction-info">
-        <strong>Walmart</strong>
-        <small>Today · Shopping</small>
-      </div>
-      <strong class="debit">-$125.50</strong>
-    </div>
+    @for (transaction of recentTransactions(); track transaction.transactionId) {
+      <div class="transaction">
+        <div class="transaction-icon">
+          {{ transaction.transactionType === 'DEBIT' ? '↗' : '↙' }}
+        </div>
 
-    <div class="transaction">
-      <div class="transaction-icon">💼</div>
-      <div class="transaction-info">
-        <strong>Salary Deposit</strong>
-        <small>Yesterday · Income</small>
-      </div>
-      <strong class="credit">+$4,500.00</strong>
-    </div>
+        <div class="transaction-info">
+          <strong>{{ getTransactionName(transaction) }}</strong>
+          <small>
+            {{ transaction.createdAt | date:'MMM dd, yyyy' }}
+          </small>
+        </div>
 
-    <div class="transaction">
-      <div class="transaction-icon">☕</div>
-      <div class="transaction-info">
-        <strong>Starbucks</strong>
-        <small>Yesterday · Food</small>
+        <strong [class.debit]="transaction.transactionType === 'DEBIT'"
+                [class.credit]="transaction.transactionType === 'CREDIT'">
+          {{ transaction.transactionType === 'CREDIT' ? '+' : '-' }}{{ transaction.amount | currency:'CAD':'symbol-narrow':'1.2-2' }}
+        </strong>
       </div>
-      <strong class="debit">-$12.75</strong>
-    </div>
-
-    <div class="transaction">
-      <div class="transaction-icon">🏠</div>
-      <div class="transaction-info">
-        <strong>Rent Payment</strong>
-        <small>Oct 30 · Housing</small>
-      </div>
-      <strong class="debit">-$1,800.00</strong>
-    </div>
-
-    <div class="transaction">
-      <div class="transaction-icon">💰</div>
-      <div class="transaction-info">
-        <strong>Cashback Reward</strong>
-        <small>Oct 29 · Reward</small>
-      </div>
-      <strong class="credit">+$25.00</strong>
-    </div>
+    } @empty {
+      <p>No transactions available.</p>
+    }
   </div>
+
 </div>

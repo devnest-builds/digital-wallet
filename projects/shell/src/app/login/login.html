@@ -28,10 +28,8 @@
       <p class="error-message">{{ errorMessage() }}</p>
     }
 
-    <button type="submit">Sign In</button>
-
-    <p class="demo-credentials">
-      Demo: demo@wallet.com / Wallet@123
-    </p>
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Signing in...' : 'Sign In' }}
+    </button>
   </form>
 </div>

@@ -1,27 +1,51 @@
 
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+
+interface AuthResponse {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: number;
+  email: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly authenticated = signal(false);
+  private readonly apiUrl = 'http://localhost:8080/api/auth';
+
+  private readonly authenticated = signal(
+    this.getStoredToken() !== null,
+  );
 
   readonly isAuthenticated = this.authenticated.asReadonly();
 
-  login(email: string, password: string): boolean {
-    if (
-      email === 'demo@wallet.com' &&
-      password === 'Wallet@123'
-    ) {
-      this.authenticated.set(true);
-      return true;
-    }
+  constructor(private readonly http: HttpClient) {}
 
-    return false;
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, {
+        email,
+        password,
+      })
+      .pipe(
+        tap((response) => {
+          sessionStorage.setItem('access_token', response.accessToken);
+          this.authenticated.set(true);
+        }),
+      );
   }
 
   logout(): void {
+    sessionStorage.removeItem('access_token');
     this.authenticated.set(false);
+  }
+
+  private getStoredToken(): string | null {
+    return typeof sessionStorage !== 'undefined'
+      ? sessionStorage.getItem('access_token')
+      : null;
   }
 }

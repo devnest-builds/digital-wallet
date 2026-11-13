@@ -18,17 +18,28 @@ export class Login {
   protected password = '';
 
   protected readonly errorMessage = signal('');
+  protected readonly loading = signal(false);
 
   protected login(): void {
-    const success = this.authService.login(
-      this.email,
-      this.password,
-    );
+    this.errorMessage.set('');
+    this.loading.set(true);
 
-    if (success) {
-      this.router.navigate(['/wallet']);
-    } else {
-      this.errorMessage.set('Invalid email or password.');
-    }
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.router.navigate(['/wallet']);
+      },
+      error: (error) => {
+        this.loading.set(false);
+
+        if (error.status === 401) {
+          this.errorMessage.set('Invalid email or password.');
+        } else {
+          this.errorMessage.set(
+            'Unable to connect to the server. Please try again.',
+          );
+        }
+      },
+    });
   }
 }
