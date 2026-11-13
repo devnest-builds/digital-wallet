@@ -17,18 +17,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.devnest.wallet.event.TransferCompletedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Service
 public class WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletTransactionRepository transactionRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public WalletService(
             WalletRepository walletRepository,
-            WalletTransactionRepository transactionRepository) {
+            WalletTransactionRepository transactionRepository,
+            ApplicationEventPublisher eventPublisher) {
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -203,6 +208,15 @@ public class WalletService {
 
         WalletTransaction savedTransaction =
                 transactionRepository.saveAndFlush(transaction);
+
+        // 8. Publish an event after the transfer is committed.
+        eventPublisher.publishEvent(new TransferCompletedEvent(
+                savedTransaction.getId(),
+                savedTransaction.getFromAccount(),
+                savedTransaction.getToAccount(),
+                savedTransaction.getAmount(),
+                savedTransaction.getCreatedAt()
+        ));        
 
         return new TransferResponse(
                 savedTransaction.getId(),
